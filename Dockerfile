@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies and generate Prisma client
+RUN npm install && npx prisma generate
 
 # Copy source
 COPY . .
