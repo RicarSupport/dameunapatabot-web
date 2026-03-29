@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Request {
+  id              String    @id @default(cuid())
+  token           String    @unique
+  type            FormType
+  status          Status    @default(PENDING)
+  name            String
+  phone           String
+  email           String?
+  data            Json
+  files           String[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  reviewedAt      DateTime?
+  reviewedBy      String?
+  rejectionReason String?
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum FormType {
+  ADOPTION
+  GIVE_UP
+  FOSTER
+  VOLUNTEER
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+}
