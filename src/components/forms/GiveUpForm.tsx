@@ -10,10 +10,10 @@ const giveUpSchema = z.object({
   name: z.string().min(2, 'El nombre es requerido'),
   phone: z.string().min(8, 'El teléfono es requerido'),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
-  animalType: z.enum(['perro', 'gato'])
+  animalType: z.enum(['perro', 'gato']),
   breed: z.string().optional(),
   age: z.string().optional(),
-  sex: z.enum(['macho', 'hembra'])
+  sex: z.enum(['macho', 'hembra']),
   description: z.string().min(10, 'Cuéntanos más sobre tu mascota'),
 })
 
