@@ -47,6 +47,7 @@ type AdoptionFormData = z.infer<typeof adoptionSchema>
 export function AdoptionForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([])
   const [uploadError, setUploadError] = useState('')
