@@ -8,28 +8,20 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     
-    const { name, phone, email, housingType, hasYard, currentPets, hasChildren, childrenAges, workHours, petInterest, adoptionReason } = body
-    
     const token = randomUUID()
+    
+    // Determine type based on the type field or default to DOG
+    const type = body.type === 'CAT' ? 'GIVE_UP' : 'ADOPTION'
     
     const request = await prisma.request.create({
       data: {
         token,
-        type: 'ADOPTION',
+        type: type,
         status: 'PENDING',
-        name,
-        phone,
-        email: email || null,
-        data: {
-          housingType,
-          hasYard,
-          currentPets,
-          hasChildren,
-          childrenAges,
-          workHours,
-          petInterest,
-          adoptionReason,
-        },
+        name: body.nombreCompleto,
+        phone: body.numeroCelular,
+        email: body.instagramFacebook || null,
+        data: body,
         files: [],
       },
     })

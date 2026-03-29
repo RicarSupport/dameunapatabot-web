@@ -15,46 +15,41 @@ const adoptionSchema = z.object({
   numeroCelular: z.string().min(8, 'El celular es requerido'),
   instagramFacebook: z.string().optional(),
 
-  // Vivienda y familia
-  ConviveConNiñosAnimales: z.string().min(10, 'Indica si convivirá con niños/animales'),
-  quienesVivenFrecuentan: z.string().min(10, 'Indica quiénes viven en casa'),
-  otrasMascotas: z.string().optional(),
-  tienePatioCerrado: z.string().min(10, 'Indica si tenés patio cerrado'),
+  // Convivencia
+  conviviraConNiñosAnimales: z.string().min(10, 'Indica si convivirá con niños/animales'),
+  primeraVezAdoptaGato: z.string().min(10, 'Indica si es primera vez'),
+  tienePatio: z.string().min(10, 'Indica si tiene patio'),
 
   // Adopción
   porqueAdoptar: z.string().min(20, 'Cuéntanos por qué querés adoptar'),
-  dondeDormiria: z.string().min(10, 'Indica dónde dormiría'),
   puedePagarVeterinario: z.string().min(10, 'Indica si puede pagar veterinario'),
-  cualVeterinaria: z.string().optional(),
-  puedeLlevarVacunas: z.string().min(10, 'Indica si puede llevarlo a vacunas'),
-  puedeDedicarleTiempo: z.string().min(10, 'Indica si puede dedicarle tiempo'),
+  dondeVivira: z.string().min(10, 'Indica dónde vivirá'),
+  dondeDormiria: z.string().min(10, 'Indica dónde dormiría'),
 
   // Compromisos
   seComprometeCastrar: z.boolean(),
-  seComprometeFotosVideos: z.boolean(),
-  seComprometeAvisarExtravio: z.boolean(),
+  seComprometeReportes: z.boolean(),
   seComprometeEntregarVuelta: z.boolean(),
 
   // Aporte
   aporta100milGs: z.string(),
 
   // Mascota de interés
-  nombreMascotaInteres: z.string().min(2, 'Indica el nombre del animal de interés'),
+  nombreMascotaInteres: z.string().min(2, 'Indica el nombre del gato de interés'),
 })
 
 type AdoptionFormData = z.infer<typeof adoptionSchema>
 
-export function AdoptionForm() {
+export function CatAdoptionForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<AdoptionFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<AdoptionFormData>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
       seComprometeCastrar: false,
-      seComprometeFotosVideos: false,
-      seComprometeAvisarExtravio: false,
+      seComprometeReportes: false,
       seComprometeEntregarVuelta: false,
     }
   })
@@ -67,7 +62,7 @@ export function AdoptionForm() {
       const res = await fetch('/api/forms/adoption', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, type: 'CAT' }),
       })
 
       if (!res.ok) throw new Error('Error al enviar')
@@ -107,7 +102,7 @@ export function AdoptionForm() {
             {errors.direccionCiudad && <p className="text-[--error] text-sm mt-1">{errors.direccionCiudad.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Edad</label>
+            <label className="block text-sm font-medium mb-1">Edad (si sos menor de edad necesitás autorización del mayor)</label>
             <input {...register('edad')} className="w-full p-3 border rounded-lg" />
           </div>
         </div>
@@ -125,31 +120,32 @@ export function AdoptionForm() {
         </div>
       </div>
 
-      {/* Vivienda y Familia */}
+      {/* Convivencia */}
       <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-[--primary]">🏠 Vivienda y Familia</h3>
+        <h3 className="text-lg font-semibold text-[--primary]">🏠 Convivencia</h3>
 
         <div>
-          <label className="block text-sm font-medium mb-1">¿Convivirá la mascota con niños y/o animales? *</label>
-          <input {...register('ConviveConNiñosAnimales')} className="w-full p-3 border rounded-lg" placeholder="Contanos quiénes convivirán con la mascota" />
-          {errors.ConviveConNiñosAnimales && <p className="text-[--error] text-sm mt-1">{errors.ConviveConNiñosAnimales.message}</p>}
+          <label className="block text-sm font-medium mb-1">¿Convivirá el gato/a con niños u otros animales? *</label>
+          <input {...register('conviviraConNiñosAnimales')} className="w-full p-3 border rounded-lg" />
+          {errors.conviviraConNiñosAnimales && <p className="text-[--error] text-sm mt-1">{errors.conviviraConNiñosAnimales.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">¿Quiénes viven y/o frecuentan la casa? *</label>
-          <input {...register('quienesVivenFrecuentan')} className="w-full p-3 border rounded-lg" />
-          {errors.quienesVivenFrecuentan && <p className="text-[--error] text-sm mt-1">{errors.quienesVivenFrecuentan.message}</p>}
+          <label className="block text-sm font-medium mb-1">¿Es la primera vez que adoptás un gato/a? *</label>
+          <input {...register('primeraVezAdoptaGato')} className="w-full p-3 border rounded-lg" />
+          {errors.primeraVezAdoptaGato && <p className="text-[--error] text-sm mt-1">{errors.primeraVezAdoptaGato.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Si tenés otras mascotas: ¿Cómo se llaman? ¿Qué edad tienen?</label>
-          <input {...register('otrasMascotas')} className="w-full p-3 border rounded-lg" />
+          <label className="block text-sm font-medium mb-1">¿Viviría en casa o departamento? ¿Nos podrías enviar fotos? *</label>
+          <input {...register('dondeVivira')} className="w-full p-3 border rounded-lg" />
+          {errors.dondeVivira && <p className="text-[--error] text-sm mt-1">{errors.dondeVivira.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">¿Tenés patio cerrado? ¿Nos podrías enviar fotos? *</label>
-          <input {...register('tienePatioCerrado')} className="w-full p-3 border rounded-lg" />
-          {errors.tienePatioCerrado && <p className="text-[--error] text-sm mt-1">{errors.tienePatioCerrado.message}</p>}
+          <label className="block text-sm font-medium mb-1">¿Tenés patio? *</label>
+          <input {...register('tienePatio')} className="w-full p-3 border rounded-lg" />
+          {errors.tienePatio && <p className="text-[--error] text-sm mt-1">{errors.tienePatio.message}</p>}
         </div>
       </div>
 
@@ -164,38 +160,19 @@ export function AdoptionForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">¿Dónde dormiría el perro? *</label>
+          <label className="block text-sm font-medium mb-1">¿Podrás pagar el veterinario? ¿Y encargarte de sus consultas y/o vacunas cuando las requiera? *</label>
+          <input {...register('puedePagarVeterinario')} className="w-full p-3 border rounded-lg" />
+          {errors.puedePagarVeterinario && <p className="text-[--error] text-sm mt-1">{errors.puedePagarVeterinario.message}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">¿En dónde dormiría? *</label>
           <input {...register('dondeDormiria')} className="w-full p-3 border rounded-lg" />
           {errors.dondeDormiria && <p className="text-[--error] text-sm mt-1">{errors.dondeDormiria.message}</p>}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">¿Podrás pagar el veterinario? *</label>
-            <input {...register('puedePagarVeterinario')} className="w-full p-3 border rounded-lg" />
-            {errors.puedePagarVeterinario && <p className="text-[--error] text-sm mt-1">{errors.puedePagarVeterinario.message}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">¿A cuál veterinaria irías?</label>
-            <input {...register('cualVeterinaria')} className="w-full p-3 border rounded-lg" />
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">¿Podrás llevarlo siempre a ponerse sus vacunas? *</label>
-            <input {...register('puedeLlevarVacunas')} className="w-full p-3 border rounded-lg" />
-            {errors.puedeLlevarVacunas && <p className="text-[--error] text-sm mt-1">{errors.puedeLlevarVacunas.message}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">¿Podrás dedicarle a tu mascota todo el tiempo que necesita? *</label>
-            <input {...register('puedeDedicarleTiempo')} className="w-full p-3 border rounded-lg" />
-            {errors.puedeDedicarleTiempo && <p className="text-[--error] text-sm mt-1">{errors.puedeDedicarleTiempo.message}</p>}
-          </div>
-        </div>
-
         <div>
-          <label className="block text-sm font-medium mb-1">¿Cuál es el nombre del perro/a que te interesa? *</label>
+          <label className="block text-sm font-medium mb-1">¿Cuál es el nombre del gato/a que te interesa? *</label>
           <input {...register('nombreMascotaInteres')} className="w-full p-3 border rounded-lg" placeholder="Nombre del animal" />
           {errors.nombreMascotaInteres && <p className="text-[--error] text-sm mt-1">{errors.nombreMascotaInteres.message}</p>}
         </div>
@@ -208,23 +185,24 @@ export function AdoptionForm() {
         <div className="space-y-3">
           <label className="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" {...register('seComprometeCastrar')} className="w-5 h-5 mt-0.5" />
-            <span className="text-sm">Te comprometes a llevarlo a una veterinaria a castrar a los 6 meses (requisito obligatorio) *</span>
+            <span className="text-sm">En caso de que el gato/a todavía sea muy pequeño para su castración, ¿te comprometes a llevarlo a castrar apenas esté apto/a? (requisito obligatorio) *</span>
           </label>
 
           <label className="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" {...register('seComprometeFotosVideos')} className="w-5 h-5 mt-0.5" />
-            <span className="text-sm">Te comprometes a enviarnos siempre fotos/vídeos del perro para saber que está bien *</span>
-          </label>
-
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" {...register('seComprometeAvisarExtravio')} className="w-5 h-5 mt-0.5" />
-            <span className="text-sm">Si el perro llegara a extraviarse, te comprometes a avisar a la organización *</span>
+            <input type="checkbox" {...register('seComprometeReportes')} className="w-5 h-5 mt-0.5" />
+            <span className="text-sm">Te comprometes a enviarnos regularmente reportes (fotos, vídeos) de él/ella para saber que está bien cuidado/a *</span>
           </label>
 
           <label className="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" {...register('seComprometeEntregarVuelta')} className="w-5 h-5 mt-0.5" />
-            <span className="text-sm">Si ya no le podés tener o vivirá en otro lugar, necesitamos que sea informado a la organización (no admitimos que sean dados en adopción a un lugar desconocido para nosotras) *</span>
+            <span className="text-sm">En caso de que ya no le quieran/puedan tener, ¿se comprometen a avisarnos y entregarnos el gato de vuelta? (nosotras nos encargaremos de buscarle un nuevo adoptante responsable) *</span>
           </label>
+        </div>
+
+        <div className="bg-[--background] rounded-lg p-4 mt-4">
+          <p className="text-sm text-[--text-muted]">
+            <strong>Recordatorio:</strong> Siempre es importante que el gato/a las primeras 3-4 semanas se mantenga dentro de la casa o departamento las 24hs, con su caja de arena sanitaria, comida y agua siempre dentro también.
+          </p>
         </div>
       </div>
 
@@ -232,7 +210,7 @@ export function AdoptionForm() {
       <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
         <h3 className="text-lg font-semibold text-[--primary]">💰 Aporte</h3>
         <div>
-          <label className="block text-sm font-medium mb-1">¿Estarías dispuesto/a a realizar un aporte monetario de 100.000 Gs a nuestra organización por esta adopción (para cubrir gastos de vacunación, antiparasitario, análisis, baños, etc.)? *</label>
+          <label className="block text-sm font-medium mb-1">¿Podría aportar 100 mil Gs a la fundación para cubrir costos de vacuna, antiparasitario, castración, etc.? *</label>
           <select {...register('aporta100milGs')} className="w-full p-3 border rounded-lg">
             <option value="">Seleccionar...</option>
             <option value="si">Sí, puedo aportar</option>

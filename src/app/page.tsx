@@ -48,7 +48,7 @@ export default function Home() {
             <Link href="/adoptar" className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition group">
               <div className="text-4xl mb-4">🐶</div>
               <h3 className="text-xl font-semibold mb-2 text-[--primary]">Quiero Adoptar</h3>
-              <p className="text-[--text-muted]">Completá el formulario para iniciar el proceso de adopción.</p>
+              <p className="text-[--text-muted]">Completá el formulario para adoptar un perro o gato.</p>
             </Link>
 
             {/* Dar en adopción */}
