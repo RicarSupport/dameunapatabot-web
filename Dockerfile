@@ -7,19 +7,25 @@ WORKDIR /app
 ARG DATABASE_URL
 ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
+ARG NEXTAUTH_URL_APP
 
 # Environment variables for runtime
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
+ENV NEXTAUTH_URL_APP=${NEXTAUTH_URL_APP}
 
-# Copy package files and prisma schema
-COPY package*.json prisma/ ./
+# Copy package files
+COPY package*.json ./
 
-# Clean install and regenerate Prisma client
-RUN rm -rf node_modules .next && \
-    npm install && \
-    npx prisma generate
+# Copy prisma schema
+COPY prisma ./prisma/
+
+# Install dependencies fresh (no cache)
+RUN npm ci --prefer-offline
+
+# Generate Prisma client
+RUN npx prisma generate
 
 # Copy source
 COPY . .
