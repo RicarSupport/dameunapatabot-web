@@ -25,6 +25,7 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Call getPrisma() INSIDE authorize so env vars are loaded
         const prisma = getPrisma()
         const admin = await prisma.admin.findUnique({
           where: { email: credentials.email }
